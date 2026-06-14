@@ -1,0 +1,65 @@
+# Configuration for Exoplanet Detection Pipeline
+
+# Data Configuration
+data:
+  raw_dir: "data/raw/"
+  processed_dir: "data/processed/"
+  training_dir: "data/training/"
+  results_dir: "results/"
+  
+# Preprocessing Parameters
+preprocessing:
+  detrending_method: "savitzky_golay"  # or "polynomial", "spline"
+  window_length: 101
+  polyorder: 3
+  normalize: true
+  outlier_removal: true
+  outlier_sigma: 3.0
+  
+# Signal Detection Parameters
+signal_detection:
+  period_search_min: 0.5  # days
+  period_search_max: 100.0  # days
+  method: "bls"  # Box Least Squares
+  snr_threshold: 5.0
+  min_transits: 2  # Minimum number of transits required
+  
+# Feature Extraction Parameters
+features:
+  compute_statistics: true
+  compute_folded_curve_features: true
+  compute_transit_features: true
+  
+# Classification Model Parameters
+classifier:
+  model_type: "random_forest"  # or "neural_network", "svm"
+  random_state: 42
+  test_split: 0.2
+  validation_split: 0.1
+  n_estimators: 100  # For Random Forest
+  max_depth: 15
+  min_samples_split: 5
+  
+# Neural Network Parameters (if used)
+neural_network:
+  layers: [128, 64, 32]
+  activation: "relu"
+  dropout_rate: 0.3
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.001
+  
+# Parameter Estimation
+parameter_estimation:
+  fitting_method: "least_squares"  # or "mcmc"
+  confidence_level: 0.95
+  n_bootstrap_samples: 1000
+  
+# Output Configuration
+output:
+  save_plots: true
+  plot_format: "png"
+  dpi: 300
+  save_csv: true
+  save_models: true
+  verbose: true
