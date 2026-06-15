@@ -1,130 +1,284 @@
-# AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves
-## Technical Report
+# 🚀 AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves
 
-### Executive Summary
+## Overview
 
-This project develops an AI-based pipeline for automatically detecting exoplanet transit signals in noisy astronomical light curves. The pipeline combines signal processing techniques with machine learning to identify and classify periodic dips in stellar brightness, achieving robust detection even in crowded stellar fields with significant instrumental noise and contamination.
+This project presents an AI-enabled pipeline for detecting exoplanet transit signals from noisy astronomical light curve data obtained from NASA's Transiting Exoplanet Survey Satellite (TESS).
 
-### 1. Methodology
+The system automatically processes stellar brightness measurements, detects periodic transit-like signals, estimates key physical parameters, classifies detected events, and generates visualizations and reports.
 
-#### 1.1 Data Preprocessing
+The project was developed as a solution for the challenge:
 
-**Detrending**: Instrumental trends are removed using Savitzky-Goyal filtering (window=101, order=3) to preserve genuine astrophysical signals while eliminating slowly-varying systematics.
-
-**Normalization**: Flux is normalized to unit median to handle systematic variations in absolute brightness across observations.
-
-**Outlier Removal**: Outliers (flux deviations >3σ from median) are identified using median absolute deviation (MAD) and interpolated over to prevent spurious detections.
-
-#### 1.2 Signal Detection
-
-**Period Detection**: The Box Least Squares (BLS) algorithm searches logarithmically spaced periods from 0.5 to 100 days to identify periodic signals. For each candidate period:
-- Light curves are phase-folded
-- Transit depth and signal-to-noise ratio (SNR) are calculated
-- Multiple transit durations are tested (0.01-0.5 days)
-
-**Signal Significance**: SNR threshold of 5.0 is applied to filter low-confidence detections. SNR is computed as:
-$$\text{SNR} = \frac{\text{Transit Depth}}{\text{Out-of-Transit Noise}} \times \sqrt{N_{\text{transit}}}$$
-where $N_{\text{transit}}$ is the number of transit points.
-
-**Alias Filtering**: To avoid reporting the same signal at harmonic periods, detected signals within 1% of each other's periods are considered duplicates, keeping only the highest SNR detection.
-
-#### 1.3 Feature Extraction
-
-Three categories of features are computed for classification:
-
-**Statistical Features**:
-- Basic statistics: mean, median, std, skewness, kurtosis
-- Robustness metrics: median absolute deviation (MAD)
-- Range and extrema values
-
-**Transit-Specific Features**:
-- Transit period, depth, and duration
-- Transit sharpness: normalized depth variation
-- Ingress/egress ratio: symmetry of signal rise/fall
-- Out-of-transit variance: baseline noise level
-
-**Eclipse-Specific Features**:
-- Number of dips per period
-- Dip symmetry: variation between multiple minima
-- Dip depth variation: indicating possible blending effects
-
-#### 1.4 Classification Framework
-
-A Random Forest classifier (100 trees, max_depth=15) is trained to distinguish four signal categories:
-
-1. **Transits**: Single, symmetric dips caused by exoplanet passage
-2. **Eclipses**: Two prominent dips (primary + secondary) in eclipsing binary systems
-3. **Blends**: Contaminated signals from background/foreground source blending
-4. **False Positives**: Noise artifacts, stellar variability, or other non-astrophysical signals
-
-The classifier outputs probabilities for each class, with the maximum probability determining the final classification.
-
-#### 1.5 Parameter Estimation
-
-For transit signals, parameters are refined via least-squares fitting:
-
-- **Period**: Refined from periodogram peak using narrow-window optimization
-- **Depth**: Fitted as the median flux difference between transit and baseline
-- **Duration**: Estimated from BLS as the duration producing maximum SNR
-
-**Confidence Intervals**: Bootstrap resampling (1000 samples) with random flux perturbations within uncertainties provides 95% confidence intervals for all parameters.
-
-### 2. Assumptions and Limitations
-
-**Assumptions**:
-1. Exoplanet transits produce single, periodic dips in light curves
-2. Transit signals have lower SNR than obvious instrumental artifacts
-3. False positive rates can be reduced through multivariate classification
-4. Noise is approximately Gaussian with time-constant properties
-
-**Limitations**:
-1. Grazing transits or edge-on geometries may be underdetected
-2. Long-period planets (>100 days) with few transits per dataset fall outside the search window
-3. Crowded stellar fields with high blending contamination may reduce sensitivity
-4. Very short-duration transits (<1 hour) may be smoothed by cadence limitations
-
-### 3. Tools and Libraries
-
-| Tool/Library | Purpose | Version |
-|---|---|---|
-| NumPy | Numerical computing, array operations | ≥1.21 |
-| SciPy | Signal processing, optimization | ≥1.7 |
-| Pandas | Data manipulation and I/O | ≥1.3 |
-| Scikit-learn | Machine learning, classification | ≥1.0 |
-| Lightkurve | Astronomical light curve handling | ≥2.0 |
-| Astropy | Astronomical utilities, units | ≥4.3 |
-| Matplotlib/Seaborn | Visualization | Latest |
-
-### 4. Uncertainty Estimation
-
-**Photometric Uncertainty**: Flux uncertainties are propagated through detrending using standard error propagation rules.
-
-**Parameter Uncertainties**: Bootstrap resampling generates 1000 perturbed versions of each light curve by adding Gaussian noise scaled to measured uncertainties. Each perturbed curve is reanalyzed, and parameter distributions provide empirical confidence intervals.
-
-**Detection Significance**: Conservative SNR thresholds (≥5) ensure >99.9% confidence that detected signals are not noise fluctuations.
-
-**Classification Uncertainty**: Classifier confidence scores reflect the probability distribution across all four classes.
-
-### 5. Results and Validation
-
-**Validation Strategy**:
-- Train/test split: 80/20 on labeled curated datasets
-- Cross-validation: 5-fold to assess model generalization
-- Evaluation metrics:
-  - Precision/Recall: For transit detection rate and false positive rate
-  - F1-score: Harmonic mean for balanced evaluation
-  - Confusion matrix: Per-class performance
-
-**Expected Performance**:
-- Transit detection efficiency: >95% for SNR > 10
-- False positive rate: <5% on test data
-- Parameter estimation accuracy: ±1-5% for period and depth depending on SNR
-
-### 6. Conclusion
-
-This AI-driven pipeline provides a robust, automated tool for exoplanet discovery in large-scale survey data. By combining classical signal processing with machine learning, it achieves high sensitivity while maintaining low false positive rates, enabling systematic searches of millions of stellar light curves.
+**"AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves"**
 
 ---
 
-**Report Date**: June 2026  
-**Author**: Shahid
+## Features
+
+✅ Load and process real TESS light curve data (.fits)
+
+✅ Remove invalid observations and normalize flux measurements
+
+✅ Detect periodic transit-like signals
+
+✅ Estimate:
+
+* Orbital Period
+* Transit Depth
+* Transit Duration
+* Signal-to-Noise Ratio (SNR)
+
+✅ Classify detected events into astrophysical categories
+
+✅ Generate light curve visualizations
+
+✅ Export results to CSV format
+
+✅ Analyze real NASA TESS observations
+
+---
+
+## Project Architecture
+
+```text
+TESS Light Curve (.fits)
+            │
+            ▼
+     Preprocessing
+            │
+            ▼
+    Signal Detection
+    (Lomb–Scargle)
+            │
+            ▼
+  Parameter Estimation
+            │
+            ▼
+     Classification
+            │
+            ▼
+    Results & Plots
+```
+
+---
+
+## Repository Structure
+
+```text
+exoplanet-detection-ai/
+│
+├── src/
+│   ├── __init__.py
+│   ├── signal_detection.py
+│   ├── preprocessing.py
+│   ├── feature_extraction.py
+│   └── classifier.py
+│
+├── detect_real_tess.py
+├── download_tess.py
+├── plot_real_tess.py
+├── run.py
+├── test_detector.py
+│
+├── pi_mensae.fits
+├── results.csv
+├── lightcurve.png
+├── pi_mensae_lightcurve.png
+│
+└── README.md
+```
+
+---
+
+## Technologies Used
+
+### Programming Language
+
+* Python 3.12
+
+### Scientific Computing
+
+* NumPy
+* SciPy
+* Pandas
+
+### Astronomy Libraries
+
+* Lightkurve
+* Astropy
+
+### Visualization
+
+* Matplotlib
+
+### Development Environment
+
+* GitHub Codespaces
+* Git
+* GitHub
+
+---
+
+## Methodology
+
+### 1. Data Preprocessing
+
+The raw TESS light curve is cleaned by:
+
+* Removing NaN values
+* Filtering invalid observations
+* Normalizing flux measurements
+
+---
+
+### 2. Signal Detection
+
+Periodic signals are detected using the Lomb–Scargle Periodogram.
+
+This method identifies repeating brightness variations within noisy astronomical observations.
+
+---
+
+### 3. Parameter Estimation
+
+For each detected signal, the pipeline estimates:
+
+#### Orbital Period
+
+Time between consecutive transit events.
+
+#### Transit Depth
+
+Relative decrease in stellar brightness.
+
+#### Transit Duration
+
+Length of the transit event.
+
+#### Signal-to-Noise Ratio (SNR)
+
+Confidence level of the detection.
+
+---
+
+### 4. Classification
+
+Detected candidates are automatically classified using signal characteristics:
+
+| Condition     | Classification      |
+| ------------- | ------------------- |
+| SNR < 5       | Noise               |
+| Depth < 0.001 | Exoplanet Candidate |
+| Depth < 0.05  | Possible Transit    |
+| Depth ≥ 0.05  | Eclipsing Binary    |
+
+---
+
+## Example Results
+
+Analysis of real TESS observations of **Pi Mensae (TIC 261136679)** produced the following candidates:
+
+| Candidate | Period (days) | Depth   | SNR   | Duration (days) | Class               |
+| --------- | ------------- | ------- | ----- | --------------- | ------------------- |
+| 1         | 23.632        | 0.00022 | 19.02 | 0.139           | Exoplanet Candidate |
+| 2         | 17.282        | 0.00017 | 16.60 | 0.191           | Exoplanet Candidate |
+| 3         | 2.353         | 0.00003 | 16.13 | 0.474           | Exoplanet Candidate |
+| 4         | 9.243         | 0.00007 | 15.22 | 0.500           | Exoplanet Candidate |
+| 5         | 4.614         | 0.00005 | 14.78 | 0.474           | Exoplanet Candidate |
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/shahid0803/exoplanet-detection-ai.git
+cd exoplanet-detection-ai
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Or install manually:
+
+```bash
+pip install numpy scipy pandas matplotlib astropy lightkurve
+```
+
+---
+
+## Usage
+
+### Download TESS Data
+
+```bash
+python download_tess.py
+```
+
+### Run Exoplanet Detection
+
+```bash
+python detect_real_tess.py
+```
+
+### Generate Visualizations
+
+```bash
+python plot_real_tess.py
+```
+
+---
+
+## Output Files
+
+### results.csv
+
+Contains:
+
+* Candidate ID
+* Classification
+* Period
+* Transit Depth
+* Duration
+* SNR
+
+### Generated Figures
+
+* lightcurve.png
+* pi_mensae_lightcurve.png
+
+---
+
+## Future Improvements
+
+* Box Least Squares (BLS) transit search
+* Deep learning-based classifiers
+* Training on larger labeled TESS datasets
+* Automated false-positive rejection
+* Multi-sector validation
+* Confidence calibration and uncertainty modeling
+
+---
+
+## Conclusion
+
+This project demonstrates how astronomical signal-processing techniques and AI-inspired classification methods can be combined to identify exoplanet candidates in noisy light curve data.
+
+The developed pipeline successfully analyzes real TESS observations, detects periodic transit-like signals, estimates physical parameters, and classifies candidate events with confidence metrics.
+
+---
+
+## Author
+
+**Shahid Ali**
+
+GitHub: https://github.com/shahid0803
+
+---
+
+## License
+
+This project is intended for educational, research, and scientific purposes.
