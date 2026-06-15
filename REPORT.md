@@ -1,168 +1,120 @@
-# 🚀 AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves
+# 🌌 AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves
 
-## Overview
+## Technical Report
 
-This project presents an AI-enabled pipeline for detecting exoplanet transit signals from noisy astronomical light curve data obtained from NASA's Transiting Exoplanet Survey Satellite (TESS).
-
-The system automatically processes stellar brightness measurements, detects periodic transit-like signals, estimates key physical parameters, classifies detected events, and generates visualizations and reports.
-
-The project was developed as a solution for the challenge:
-
-**"AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves"**
+**Author:** Shahid Ali
+**Project:** AI-Enabled Detection of Exoplanets from Noisy Astronomical Light Curves
+**Dataset:** NASA TESS Light Curves
+**Tools:** Python, NumPy, SciPy, Pandas, Astropy, Lightkurve, Scikit-Learn, Matplotlib
 
 ---
 
-## Features
+# 📖 Abstract
 
-✅ Load and process real TESS light curve data (.fits)
+The discovery of exoplanets using transit photometry requires identifying extremely small periodic decreases in stellar brightness. Real astronomical observations are often contaminated by instrumental noise, stellar variability, and blending from nearby stars, making signal detection challenging.
 
-✅ Remove invalid observations and normalize flux measurements
-
-✅ Detect periodic transit-like signals
-
-✅ Estimate:
-
-* Orbital Period
-* Transit Depth
-* Transit Duration
-* Signal-to-Noise Ratio (SNR)
-
-✅ Classify detected events into astrophysical categories
-
-✅ Generate light curve visualizations
-
-✅ Export results to CSV format
-
-✅ Analyze real NASA TESS observations
+This project presents an AI-assisted pipeline that automatically detects periodic transit-like signals from noisy TESS light curves, estimates key transit parameters, and classifies detected events into astrophysical categories. The system combines signal-processing techniques with machine learning-inspired classification to identify potential exoplanet candidates while reducing false positives.
 
 ---
 
-## Project Architecture
+# 🎯 Objectives
+
+The primary objectives of this project are:
+
+* Detect periodic brightness dips in noisy stellar light curves.
+* Distinguish between exoplanet transits and other astrophysical phenomena.
+* Estimate important transit parameters:
+
+  * Orbital Period
+  * Transit Depth
+  * Transit Duration
+* Calculate Signal-to-Noise Ratio (SNR).
+* Visualize detected events and generate analysis reports.
+
+---
+
+# 🛰️ Dataset
+
+The project utilizes light curve observations from NASA's **Transiting Exoplanet Survey Satellite (TESS)** mission.
+
+### Target Star
+
+**Pi Mensae (TIC 261136679)**
+
+### Data Format
+
+* FITS (Flexible Image Transport System)
+* Time-series photometric observations
+* Flux measurements representing stellar brightness over time
+
+---
+
+# ⚙️ Methodology
+
+## 1. Data Preprocessing
+
+Raw TESS observations contain invalid measurements and instrumental artifacts.
+
+The preprocessing stage performs:
+
+* Removal of missing values (NaNs)
+* Flux normalization
+* Outlier filtering
+* Noise reduction
+
+This improves signal quality while preserving genuine transit features.
+
+---
+
+## 2. Signal Detection
+
+Periodic signals are identified using the **Lomb–Scargle Periodogram**, a widely used technique for detecting periodicity in unevenly sampled astronomical data.
+
+### Detection Workflow
 
 ```text
-TESS Light Curve (.fits)
-            │
-            ▼
-     Preprocessing
-            │
-            ▼
-    Signal Detection
-    (Lomb–Scargle)
-            │
-            ▼
-  Parameter Estimation
-            │
-            ▼
-     Classification
-            │
-            ▼
-    Results & Plots
+Light Curve
+      ↓
+Period Search
+      ↓
+Peak Identification
+      ↓
+Transit Candidate Detection
 ```
 
----
-
-## Repository Structure
-
-```text
-exoplanet-detection-ai/
-│
-├── src/
-│   ├── __init__.py
-│   ├── signal_detection.py
-│   ├── preprocessing.py
-│   ├── feature_extraction.py
-│   └── classifier.py
-│
-├── detect_real_tess.py
-├── download_tess.py
-├── plot_real_tess.py
-├── run.py
-├── test_detector.py
-│
-├── pi_mensae.fits
-├── results.csv
-├── lightcurve.png
-├── pi_mensae_lightcurve.png
-│
-└── README.md
-```
+The algorithm evaluates multiple candidate periods and ranks them according to detection significance.
 
 ---
 
-## Technologies Used
+## 3. Transit Parameter Estimation
 
-### Programming Language
+For each detected candidate, the following parameters are estimated:
 
-* Python 3.12
+### Orbital Period
 
-### Scientific Computing
+Time interval between repeated transit events.
 
-* NumPy
-* SciPy
-* Pandas
+### Transit Depth
 
-### Astronomy Libraries
+Relative decrease in stellar brightness during transit.
 
-* Lightkurve
-* Astropy
+### Transit Duration
 
-### Visualization
+Total duration of the transit event.
 
-* Matplotlib
+### Signal-to-Noise Ratio (SNR)
 
-### Development Environment
+Detection confidence calculated using:
 
-* GitHub Codespaces
-* Git
-* GitHub
+SNR = Transit Depth / Noise Level
+
+Higher SNR values indicate stronger confidence in the detected signal.
 
 ---
 
-## Methodology
+## 4. Classification Framework
 
-### 1. Data Preprocessing
-
-The raw TESS light curve is cleaned by:
-
-* Removing NaN values
-* Filtering invalid observations
-* Normalizing flux measurements
-
----
-
-### 2. Signal Detection
-
-Periodic signals are detected using the Lomb–Scargle Periodogram.
-
-This method identifies repeating brightness variations within noisy astronomical observations.
-
----
-
-### 3. Parameter Estimation
-
-For each detected signal, the pipeline estimates:
-
-#### Orbital Period
-
-Time between consecutive transit events.
-
-#### Transit Depth
-
-Relative decrease in stellar brightness.
-
-#### Transit Duration
-
-Length of the transit event.
-
-#### Signal-to-Noise Ratio (SNR)
-
-Confidence level of the detection.
-
----
-
-### 4. Classification
-
-Detected candidates are automatically classified using signal characteristics:
+Detected events are categorized using rule-based AI classification.
 
 | Condition     | Classification      |
 | ------------- | ------------------- |
@@ -171,13 +123,17 @@ Detected candidates are automatically classified using signal characteristics:
 | Depth < 0.05  | Possible Transit    |
 | Depth ≥ 0.05  | Eclipsing Binary    |
 
+The classifier reduces false detections and prioritizes scientifically interesting candidates.
+
 ---
 
-## Example Results
+# 📊 Results
 
-Analysis of real TESS observations of **Pi Mensae (TIC 261136679)** produced the following candidates:
+The pipeline was tested using real TESS observations of **Pi Mensae**.
 
-| Candidate | Period (days) | Depth   | SNR   | Duration (days) | Class               |
+## Detected Candidates
+
+| Candidate | Period (days) | Depth   | SNR   | Duration (days) | Classification      |
 | --------- | ------------- | ------- | ----- | --------------- | ------------------- |
 | 1         | 23.632        | 0.00022 | 19.02 | 0.139           | Exoplanet Candidate |
 | 2         | 17.282        | 0.00017 | 16.60 | 0.191           | Exoplanet Candidate |
@@ -185,100 +141,92 @@ Analysis of real TESS observations of **Pi Mensae (TIC 261136679)** produced the
 | 4         | 9.243         | 0.00007 | 15.22 | 0.500           | Exoplanet Candidate |
 | 5         | 4.614         | 0.00005 | 14.78 | 0.474           | Exoplanet Candidate |
 
----
+### Best Candidate
 
-## Installation
+* Period: **23.632 days**
+* Depth: **0.00022**
+* Duration: **0.139 days**
+* SNR: **19.02**
 
-Clone the repository:
-
-```bash
-git clone https://github.com/shahid0803/exoplanet-detection-ai.git
-cd exoplanet-detection-ai
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Or install manually:
-
-```bash
-pip install numpy scipy pandas matplotlib astropy lightkurve
-```
+This candidate exhibited the strongest periodic transit-like signal among all detected events.
 
 ---
 
-## Usage
+# 📈 Visualization
 
-### Download TESS Data
+The pipeline automatically generates:
 
-```bash
-python download_tess.py
+* Light Curve Plots
+* Transit Candidate Graphs
+* Detection Results Tables
+* CSV Export Files
+
+Generated outputs:
+
+```text
+results.csv
+pi_mensae_lightcurve.png
+lightcurve.png
 ```
 
-### Run Exoplanet Detection
-
-```bash
-python detect_real_tess.py
-```
-
-### Generate Visualizations
-
-```bash
-python plot_real_tess.py
-```
+These visualizations assist in validating candidate detections and communicating results effectively.
 
 ---
 
-## Output Files
+# 🔬 Uncertainty Estimation
 
-### results.csv
+Several factors contribute to uncertainty:
 
-Contains:
+* Detector noise
+* Stellar variability
+* Sampling cadence
+* Instrumental systematics
 
-* Candidate ID
-* Classification
-* Period
-* Transit Depth
-* Duration
-* SNR
+Confidence in detected events is quantified using Signal-to-Noise Ratio (SNR).
 
-### Generated Figures
-
-* lightcurve.png
-* pi_mensae_lightcurve.png
+Candidates with higher SNR values are considered more reliable.
 
 ---
 
-## Future Improvements
+# 🚀 Future Improvements
 
-* Box Least Squares (BLS) transit search
-* Deep learning-based classifiers
-* Training on larger labeled TESS datasets
+Potential enhancements include:
+
+* Box Least Squares (BLS) transit detection
+* Deep Learning classification models
+* Multi-sector TESS analysis
 * Automated false-positive rejection
-* Multi-sector validation
-* Confidence calibration and uncertainty modeling
+* Transit model fitting using astrophysical transit equations
+* Confidence interval estimation via bootstrap sampling
 
 ---
 
-## Conclusion
+# ✅ Conclusion
 
-This project demonstrates how astronomical signal-processing techniques and AI-inspired classification methods can be combined to identify exoplanet candidates in noisy light curve data.
+This project successfully demonstrates an AI-enabled pipeline for exoplanet detection using real NASA TESS observations.
 
-The developed pipeline successfully analyzes real TESS observations, detects periodic transit-like signals, estimates physical parameters, and classifies candidate events with confidence metrics.
+The developed system:
+
+* Detects periodic transit-like signals
+* Estimates physical transit parameters
+* Classifies astrophysical events
+* Generates visual and tabular outputs
+* Operates on real astronomical datasets
+
+The results show that the proposed pipeline can efficiently identify promising exoplanet candidates and serve as a foundation for more advanced machine-learning-based astronomical surveys.
 
 ---
 
-## Author
+## 📚 References
 
-**Shahid Ali**
-
-GitHub: https://github.com/shahid0803
+1. NASA TESS Mission
+2. Astropy Collaboration
+3. Lightkurve Documentation
+4. Lomb–Scargle Periodogram Method
+5. Transit Photometry Techniques
 
 ---
 
-## License
+**Project Repository:** https://github.com/shahid0803/exoplanet-detection-ai
 
-This project is intended for educational, research, and scientific purposes.
+**Report Version:** 1.0
