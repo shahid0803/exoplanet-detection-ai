@@ -9,7 +9,6 @@ plotly>=5.20.0
 
 lightkurve>=2.5.0
 astropy>=6.0.0
-wotan>=1.10
 
 scikit-learn>=1.4.0
 
